@@ -1,5 +1,4 @@
-from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import pytest
 from _pytest.tmpdir import TempPathFactory
