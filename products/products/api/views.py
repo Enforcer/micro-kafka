@@ -1,8 +1,11 @@
+import json
+
 from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from products import producer
 from products.api.auth import UserId, get_current_user_id
 from products.api.session_provider import get_session
 from products.models import Product, ProductPhoto
@@ -43,6 +46,16 @@ def create_product(
             url=photo_url,
         )
         session.add(photo)
+
+    message = {
+        "id": product.id,
+        "title": product.title,
+        "short_description": product.short_description,
+        "price": product.price,
+        "price_currency": product.price_currency,
+    }
+    value = json.dumps(message).encode()
+    producer.send("products", value=value)
 
     return Response(status_code=201)
 

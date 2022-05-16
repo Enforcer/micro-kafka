@@ -1,12 +1,21 @@
+import json
 from typing import Any
+from unittest.mock import Mock, patch
 
 import pytest
 from _pytest.tmpdir import TempPathFactory
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-
-from products.api.app import create_app
 from tests.api_client import ApiClient
+
+from products import producer
+from products.api.app import create_app
+
+
+@pytest.fixture(autouse=True)
+def mock_producer():
+    with patch.object(producer, "send") as send_patch:
+        yield send_patch
 
 
 def test_created_product_is_returned_on_list(api_client: ApiClient) -> None:
@@ -27,6 +36,26 @@ def test_created_product_is_returned_on_list(api_client: ApiClient) -> None:
             },
         },
     ]
+
+
+def test_created_product_sends_message(
+    api_client: ApiClient, mock_producer: Mock
+) -> None:
+    create_response = api_client.create_product(user_id=1)
+    assert create_response.status_code == 201
+
+    assert mock_producer.called
+    assert len(mock_producer.mock_calls) == 1
+    the_only_call = mock_producer.mock_calls[0]
+    assert the_only_call.args == ("products",)
+    payload = json.loads(the_only_call.kwargs["value"].decode())
+    assert payload == {
+        "id": AnyInt(),
+        "title": "Brown Hat",
+        "short_description": "Rarely used",
+        "price": 10.0,
+        "price_currency": "PLN",
+    }
 
 
 def test_returns_only_own_products(api_client: ApiClient) -> None:
