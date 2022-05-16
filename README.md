@@ -32,3 +32,6 @@ See `examples/fastapi_endpoints_example.py`
 
 ## Price estimator
 `http://localhost:8400/docs`
+
+## Transactions
+`http://localhost:8500/docs`
