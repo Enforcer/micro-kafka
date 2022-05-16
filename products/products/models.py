@@ -101,3 +101,9 @@ class Offer(Base):
     buyer_id = Column(Integer(), nullable=False)
     price = Column(Numeric(), nullable=False)
     price_currency = Column(String(3), nullable=False)
+
+
+class OutboxEntry(Base):
+    __tablename__ = "outbox_entries"
+
+    id = Column(Integer(), primary_key=True)
