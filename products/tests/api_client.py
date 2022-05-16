@@ -70,4 +70,4 @@ class ApiClient:
         )
 
     def _auth_header_for(self, user_id: int) -> dict:
-        return {"X-Authorized-User-Id": str(user_id)}
+        return {"Authorization": f"Bearer {user_id}"}

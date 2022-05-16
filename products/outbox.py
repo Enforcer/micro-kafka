@@ -1,9 +1,9 @@
 from contextlib import contextmanager
 
 from kafka import KafkaProducer
-from main import BROKER_URL, DB_URI
 from sqlalchemy.orm import Session
 
+from main import BROKER_URL, DB_URI
 from products.database import init_engine
 
 engine = init_engine(DB_URI)

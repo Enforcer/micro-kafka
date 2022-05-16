@@ -6,10 +6,10 @@ import pytest
 from _pytest.tmpdir import TempPathFactory
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from tests.api_client import ApiClient
 
 from products import producer
 from products.api.app import create_app
+from tests.api_client import ApiClient
 
 
 @pytest.fixture(autouse=True)
