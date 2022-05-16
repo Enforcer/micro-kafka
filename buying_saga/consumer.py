@@ -9,7 +9,7 @@ topics = ['foobar']
 consumer = KafkaConsumer(
     *topics,
     bootstrap_servers=BROKER_URL,
-    group_id="catalog",
+    group_id="saga",
 )
 producer = KafkaProducer(bootstrap_servers=BROKER_URL)
 

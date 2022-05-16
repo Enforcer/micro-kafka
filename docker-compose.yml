@@ -1,0 +1,93 @@
+---
+version: '3'
+services:
+  shell:
+    image: ddd-microservices-app
+    build:
+      context: ./docker/
+      dockerfile: Dockerfile
+
+  products:
+    image: ddd-microservices-app
+    hostname: docker-products
+    volumes:
+      - ./products/:/usr/src/app
+    command: uvicorn web:app --reload --host 0.0.0.0 --port 8100
+    ports:
+      - 8100:8100
+
+  likes:
+    image: ddd-microservices-app
+    volumes:
+      - ./likes/:/usr/src/app
+    command: uvicorn web:app --reload --host 0.0.0.0 --port 8200
+    ports:
+      - 8200:8200
+
+  catalog:
+    image: ddd-microservices-app
+    hostname: docker-catalog
+    volumes:
+      - ./catalog/:/usr/src/app
+    command: uvicorn web:app --reload --host 0.0.0.0 --port 8300
+    depends_on:
+      - postgres
+    ports:
+      - 8300:8300
+
+  price_estimator:
+    image: ddd-microservices-app
+    hostname: docker-price-estimator
+    volumes:
+      - ./price_estimator/:/usr/src/app
+    command: uvicorn web:app --reload --host 0.0.0.0 --port 8400
+    ports:
+      - 8400:8400
+
+  saga:
+    image: ddd-microservices-app
+    hostname: docker-saga
+    volumes:
+      - ./buying_saga/:/usr/src/app
+    command: python consumer.py
+    depends_on:
+      - broker
+
+  postgres:
+    image: postgres:14
+    environment:
+      - POSTGRES_PASSWORD=catalog
+      - POSTGRES_USER=catalog
+    ports:
+      - 5432:5432
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  broker:
+    image: confluentinc/cp-kafka:7.0.1
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  kafka_ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - broker
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "local"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
