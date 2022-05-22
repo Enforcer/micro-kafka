@@ -35,3 +35,6 @@ See `examples/fastapi_endpoints_example.py`
 
 ## Transactions
 `http://localhost:8500/docs`
+
+## Zipkin
+`http://localhost:9411`
