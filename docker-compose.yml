@@ -59,13 +59,15 @@ services:
     volumes:
       - ./transactions/:/usr/src/app
     command: python prosumer.py
+    depends_on:
+      - broker
 
   saga:
     image: ddd-microservices-app
     hostname: docker-saga
     volumes:
       - ./buying_saga/:/usr/src/app
-    command: python consumer.py
+    command: watchfiles "python prosumer.py" /usr/src/app
     depends_on:
       - broker
 

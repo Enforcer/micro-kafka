@@ -1,11 +1,10 @@
-import requests
 from kafka.consumer.fetcher import ConsumerRecord
 from kafka import KafkaConsumer, KafkaProducer
 
 from main import BROKER_URL
 
 
-topics = ['foobar']
+topics = ["messages"]
 consumer = KafkaConsumer(
     *topics,
     bootstrap_servers=BROKER_URL,
@@ -18,5 +17,9 @@ for message in consumer:
     message: ConsumerRecord
     print(message)
     data = message.value.decode()
-    # producer.send('foobar', value=b'some value')
-    # requests.post()
+    try:
+        pass
+    except Exception:
+        pass
+        # if anything goes south, push to deadletter!
+        # producer.send("messages_deadletter", value=b'some value')
