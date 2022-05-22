@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StartTransaction",
+  "description": "Command to initiate a new transaction",
+  "type": "object",
+  "properties": {
+    "transaction_id": {
+      "description": "The unique identifier of a transaction",
+      "type": "string"
+    },
+    "status": {
+      "description": "Whether transaction succeeded",
+      "type": "string",
+      "enum": ["OK", "FAILURE"]
+    }
+  },
+  "required": [ "transaction_id", "status" ]
+}

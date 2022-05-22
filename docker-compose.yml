@@ -53,12 +53,28 @@ services:
     ports:
       - 8500:8500
 
+  transactions_prosumer:
+    image: ddd-microservices-app
+    hostname: docker-transactions
+    volumes:
+      - ./transactions/:/usr/src/app
+    command: python prosumer.py
+
   saga:
     image: ddd-microservices-app
     hostname: docker-saga
     volumes:
       - ./buying_saga/:/usr/src/app
     command: python consumer.py
+    depends_on:
+      - broker
+
+  process_manager:
+    image: ddd-microservices-app
+    hostname: docker-process-manager
+    volumes:
+      - ./buying_process_manager/:/usr/src/app
+    command: watchfiles "python prosumer.py" /usr/src/app
     depends_on:
       - broker
 
@@ -100,3 +116,8 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: "local"
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StartTransaction",
+  "description": "Command to initiate a new transaction",
+  "type": "object",
+  "properties": {
+    "transaction_id": {
+      "description": "The unique identifier of a transaction",
+      "type": "string"
+    },
+    "price": {
+      "description": "Price of the product",
+      "type": "object",
+      "properties": {
+        "amount": {
+          "description": "Amount to pay",
+          "type": "number"
+        },
+        "currency": {
+          "description": "3-letter ISO code for currency",
+          "type": "string",
+          "enum": ["PLN"]
+        }
+      },
+      "required": [ "amount", "currency" ]
+    }
+  },
+  "required": [ "transaction_id", "price" ]
+}
