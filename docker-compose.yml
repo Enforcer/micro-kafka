@@ -76,7 +76,7 @@ services:
     hostname: docker-process-manager
     volumes:
       - ./buying_process_manager/:/usr/src/app
-    command: watchfiles "python prosumer.py" /usr/src/app
+    command: watchfiles "python prosumer.py" /usr/src/app/prosumer.py
     depends_on:
       - broker
 
